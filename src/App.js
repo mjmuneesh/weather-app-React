@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTemperatureFull, faTint, faWind } from '@fortawesome/free-solid-svg-icons';
+import logo from './weather-icon.avif';
 
 const App = () => {
   const [location, setLocation] = useState('');
@@ -25,22 +28,27 @@ const App = () => {
       setError('');
     } catch (error) {
       setWeatherData(null);
-      setError('Failed to fetch weather data. Enter valid location.');
+      setError('Failed to fetch weather data. Enter a valid location.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const isNumberEntered = !isNaN(parseFloat(location)) && !isNaN(location - 0);
+
   return (
     <div className="app">
       <div className="weather-app">
+        <h1>Weather-App</h1>
         <input
           type="text"
           value={location}
           onChange={(event) => setLocation(event.target.value)}
           placeholder="Enter location"
         />
-        <button onClick={handleSearch}>Search</button>
+        <button onClick={handleSearch} disabled={isNumberEntered}>
+          Search
+        </button>
 
         {isLoading ? (
           <div className="loader" />
@@ -50,10 +58,16 @@ const App = () => {
 
         {weatherData && (
           <div className="weather-data">
+              <div className="logo">
+            <img src={logo} alt="React image" />
+          </div>
             <h2>{weatherData.name}</h2>
-            <p>Temperature: {weatherData.main.temp}°C</p>
-            <p>Humidity: {weatherData.main.humidity}%</p>
-            <p>Wind Speed: {weatherData.wind.speed} m/s</p>
+            <p><FontAwesomeIcon icon={faTemperatureFull} className="info-icon" />
+            Temperature: {weatherData.main.temp}°C</p>
+            <p><FontAwesomeIcon icon={faTint} className="info-icon" />
+            Humidity: {weatherData.main.humidity}%</p>
+            <p><FontAwesomeIcon icon={faWind} className="info-icon" />
+            Wind : {weatherData.wind.speed} m/s</p>
           </div>
         )}
       </div>
